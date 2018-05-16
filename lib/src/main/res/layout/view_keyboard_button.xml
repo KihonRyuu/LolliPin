@@ -1,31 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/pin_code_keyboard_button_ripple"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
-    android:paddingBottom="6dp"
-    android:paddingTop="6dp">
+    android:layout_gravity="center_vertical"
+    android:paddingBottom="@dimen/keyboard_button_padding"
+    android:paddingTop="@dimen/keyboard_button_padding"
+    tools:background="#122028">
 
     <ImageView
-        android:id="@+id/keyboard_button_imageview"
-        android:layout_width="72dp"
-        android:layout_height="72dp"
-        android:layout_gravity="center"
+        android:id="@+id/keyboard_button_bg"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
         android:background="?selectableItemBackgroundBorderless"
         android:src="@drawable/ic_lens_black_24dp"
-        android:visibility="visible" />
+        android:visibility="invisible" />
 
     <com.github.omadahealth.typefaceview.TypefaceTextView
         android:id="@+id/keyboard_button_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_centerInParent="true"
         android:maxLines="1"
         android:textColor="@android:color/white"
-        android:textSize="@dimen/keyboard_button_text_size"
-        tools:text="1" />
+        android:textSize="@dimen/keyboard_button_text_size" />
 
-</FrameLayout>
+    <ImageView
+        android:id="@+id/keyboard_button_imageview"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+
+</RelativeLayout>

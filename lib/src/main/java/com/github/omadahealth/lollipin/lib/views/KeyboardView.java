@@ -66,6 +66,7 @@ public class KeyboardView extends LinearLayout implements View.OnClickListener {
         mButtons.add((KeyboardButtonView) view.findViewById(R.id.pin_code_button_clear));
 
         for(View button : mButtons) {
+            ((KeyboardButtonView) button).needBackground(button.getId() == R.id.pin_code_button_clear);
             button.setOnClickListener(this);
         }
     }

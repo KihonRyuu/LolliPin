@@ -39,6 +39,10 @@ public class KeyboardButtonView extends RelativeLayout {
         initializeView(attrs, defStyleAttr);
     }
 
+    void needBackground(boolean isDigits) {
+        findViewById(R.id.keyboard_button_bg).setVisibility(isDigits ? View.INVISIBLE : View.VISIBLE);
+    }
+
     private void initializeView(AttributeSet attrs, int defStyleAttr) {
         if (attrs != null && !isInEditMode()) {
             final TypedArray attributes = mContext.getTheme().obtainStyledAttributes(attrs, R.styleable.KeyboardButtonView,
@@ -46,7 +50,7 @@ public class KeyboardButtonView extends RelativeLayout {
             String text = attributes.getString(R.styleable.KeyboardButtonView_lp_keyboard_button_text);
             Drawable image = attributes.getDrawable(R.styleable.KeyboardButtonView_lp_keyboard_button_image);
             boolean rippleEnabled = attributes.getBoolean(R.styleable.KeyboardButtonView_lp_keyboard_button_ripple_enabled, true);
-           
+
             attributes.recycle();
 
             LayoutInflater inflater = (LayoutInflater) mContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -64,6 +68,18 @@ public class KeyboardButtonView extends RelativeLayout {
                     imageView.setImageDrawable(image);
                     imageView.setVisibility(View.VISIBLE);
                 }
+            }
+
+            View rootView = findViewById(R.id.pin_code_keyboard_button_ripple);
+            if (rootView != null) {
+                rootView.setOnClickListener(new OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        if (mKeyboardButtonClickedListener != null) {
+                            mKeyboardButtonClickedListener.onRippleAnimationEnd();
+                        }
+                    }
+                });
             }
 
         }

@@ -18,6 +18,11 @@ import uk.me.lewisdeane.ldialogs.CustomDialog;
 public class CustomPinActivity extends AppLockActivity {
 
     @Override
+    protected void onResume() {
+        super.onResume();
+    }
+
+    @Override
     public void showForgotDialog() {
         Resources res = getResources();
         // Create the builder with required paramaters - Context, Title, Positive Text
