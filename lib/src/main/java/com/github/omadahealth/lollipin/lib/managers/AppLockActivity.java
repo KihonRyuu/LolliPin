@@ -219,7 +219,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
     }
 
     private void setForgotTextVisibility(){
-        mForgotTextView.setVisibility(mLockManager.getAppLock().shouldShowForgot(mType) ? View.VISIBLE : View.GONE);
+        mForgotTextView.setVisibility(View.GONE);
     }
 
     /**
