@@ -3,6 +3,7 @@ package com.github.omadahealth.lollipin.lib.views;
 import android.content.Context;
 import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
@@ -11,19 +12,17 @@ import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 
-import com.andexert.library.RippleView;
 import com.github.omadahealth.lollipin.lib.R;
 import com.github.omadahealth.lollipin.lib.interfaces.KeyboardButtonClickedListener;
 
 /**
  * Created by stoyan and oliviergoutay on 1/13/15.
  */
-public class KeyboardButtonView extends RelativeLayout implements RippleView.OnRippleCompleteListener {
+public class KeyboardButtonView extends RelativeLayout {
 
     private KeyboardButtonClickedListener mKeyboardButtonClickedListener;
 
     private Context mContext;
-    private RippleView mRippleView;
 
     public KeyboardButtonView(Context context) {
         this(context, null);
@@ -67,14 +66,6 @@ public class KeyboardButtonView extends RelativeLayout implements RippleView.OnR
                 }
             }
 
-            mRippleView = (RippleView) view.findViewById(R.id.pin_code_keyboard_button_ripple);
-            mRippleView.setOnRippleCompleteListener(this);
-//            mRippleView.setRippleAnimationListener(this);
-            if (mRippleView != null) {
-                if (!rippleEnabled) {
-                    mRippleView.setVisibility(View.INVISIBLE);
-                }
-            }
         }
     }
 
@@ -96,7 +87,6 @@ public class KeyboardButtonView extends RelativeLayout implements RippleView.OnR
 */
 
     /**
-     * Retain touches for {@link com.andexert.library.RippleView}.
      * Otherwise views above will not have the event.
      */
     @Override
@@ -105,10 +95,4 @@ public class KeyboardButtonView extends RelativeLayout implements RippleView.OnR
         return false;
     }
 
-    @Override
-    public void onComplete(RippleView rippleView) {
-        if (mKeyboardButtonClickedListener != null) {
-            mKeyboardButtonClickedListener.onRippleAnimationEnd();
-        }
-    }
 }

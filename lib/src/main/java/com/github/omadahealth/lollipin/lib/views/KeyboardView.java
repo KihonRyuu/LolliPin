@@ -103,7 +103,6 @@ public class KeyboardView extends LinearLayout implements View.OnClickListener {
     }
 
     /**
-     * Set the {@link com.andexert.library.RippleAnimationListener} to the
      * {@link com.github.omadahealth.lollipin.lib.views.KeyboardButtonView}
      */
     public void setKeyboardButtonClickedListener(KeyboardButtonClickedListener keyboardButtonClickedListener) {
