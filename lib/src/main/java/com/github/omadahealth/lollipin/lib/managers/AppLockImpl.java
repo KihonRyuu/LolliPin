@@ -338,6 +338,12 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
     public boolean shouldLockSceen(Activity activity) {
         Log.d(TAG, "Lollipin shouldLockSceen() called");
 
+        // no pass code set
+        if (!isPasscodeSet()) {
+            Log.d(TAG, "lock passcode not set.");
+            return false;
+        }
+
         // previously backed out of pin screen
         if (pinChallengeCancelled()) {
             return true;
@@ -350,12 +356,6 @@ public class AppLockImpl<T extends AppLockActivity> extends AppLock implements L
                 Log.d(TAG, "already unlock activity");
                 return false;
             }
-        }
-
-        // no pass code set
-        if (!isPasscodeSet()) {
-            Log.d(TAG, "lock passcode not set.");
-            return false;
         }
 
         // no enough timeout
