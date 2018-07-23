@@ -142,7 +142,15 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
         mFingerprintTextView = (TextView) this.findViewById(R.id.pin_code_fingerprint_textview);
         if (mType == AppLock.UNLOCK_PIN && Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             mFingerprintManager = (FingerprintManager) getSystemService(Context.FINGERPRINT_SERVICE);
-            mFingerprintUiHelper = new FingerprintUiHelper.FingerprintUiHelperBuilder(mFingerprintManager).build(mFingerprintImageView, mFingerprintTextView, this);
+            mFingerprintUiHelper = new FingerprintUiHelper
+                    .FingerprintUiHelperBuilder(mFingerprintManager)
+                    .build(
+                            mFingerprintImageView,
+                            mFingerprintTextView,
+                            getFingerprintText(),
+                            getFingerprintSuccessText(),
+                            getFingerprintFailureText(),
+                            this);
             try {
             if (mFingerprintManager.isHardwareDetected() && mFingerprintUiHelper.isFingerprintAuthAvailable()
                     && mLockManager.getAppLock().isFingerprintAuthEnabled()) {
@@ -221,6 +229,12 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
     private void setForgotTextVisibility(){
         mForgotTextView.setVisibility(View.GONE);
     }
+
+    public String getFingerprintText() { return getString(R.string.pin_code_fingerprint_text); }
+
+    public String getFingerprintSuccessText() { return getString(R.string.pin_code_fingerprint_success); }
+
+    public String getFingerprintFailureText() { return getString(R.string.pin_code_fingerprint_not_recognized); }
 
     /**
      * Overrides to allow a slide_down animation when finishing

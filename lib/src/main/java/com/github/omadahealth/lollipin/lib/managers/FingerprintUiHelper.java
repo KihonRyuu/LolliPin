@@ -101,6 +101,18 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
      * Used if the user cancelled the authentication by himself
      */
     private boolean mSelfCancelled;
+    /**
+     * Custom fingerprint text
+     */
+    private String fingerprintText;
+    /**
+     * Custom fingerprint success text
+     */
+    private String fingerprintSuccessText;
+    /**
+     * Custom fingerprint failure text
+     */
+    private String fingerprintFailureText;
 
     /**
      * Builder class for {@link FingerprintUiHelper} in which injected fields from Dagger
@@ -113,9 +125,23 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
             mFingerPrintManager = fingerprintManager;
         }
 
-        public FingerprintUiHelper build(ImageView icon, TextView errorTextView, Callback callback) {
-            return new FingerprintUiHelper(mFingerPrintManager, icon, errorTextView,
-                    callback);
+        public FingerprintUiHelper build(
+                ImageView icon,
+                TextView errorTextView,
+                String fingerprintText,
+                String fingerprintSuccessText,
+                String fingerprintFailureText,
+                Callback callback
+        ) {
+            return new FingerprintUiHelper(
+                    mFingerPrintManager,
+                    icon,
+                    errorTextView,
+                    fingerprintText,
+                    fingerprintSuccessText,
+                    fingerprintFailureText,
+                    callback
+            );
         }
     }
 
@@ -123,11 +149,21 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
      * Constructor for {@link FingerprintUiHelper}. This method is expected to be called from
      * only the {@link FingerprintUiHelperBuilder} class.
      */
-    private FingerprintUiHelper(FingerprintManager fingerprintManager,
-                                ImageView icon, TextView errorTextView, Callback callback) {
+    private FingerprintUiHelper(
+            FingerprintManager fingerprintManager,
+            ImageView icon,
+            TextView errorTextView,
+            String fingerprint,
+            String fingerprintSuccess,
+            String fingerprintFailure,
+            Callback callback
+    ) {
         mFingerprintManager = fingerprintManager;
         mIcon = icon;
         mErrorTextView = errorTextView;
+        fingerprintText = fingerprint;
+        fingerprintSuccessText = fingerprintSuccess;
+        fingerprintFailureText = fingerprintFailure;
         mCallback = callback;
     }
 
@@ -189,8 +225,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
      */
     @Override
     public void onAuthenticationFailed() {
-        showError(mIcon.getResources().getString(
-                R.string.pin_code_fingerprint_not_recognized));
+        showError(fingerprintFailureText);
     }
 
     /**
@@ -202,8 +237,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         mIcon.setImageResource(R.drawable.ic_fingerprint_success);
         mErrorTextView.setTextColor(
                 mErrorTextView.getResources().getColor(R.color.success_color, null));
-        mErrorTextView.setText(
-                mErrorTextView.getResources().getString(R.string.pin_code_fingerprint_success));
+        mErrorTextView.setText(fingerprintSuccessText);
         mIcon.postDelayed(new Runnable() {
             @Override
             public void run() {
@@ -298,8 +332,7 @@ public class FingerprintUiHelper extends FingerprintManager.AuthenticationCallba
         public void run() {
             mErrorTextView.setTextColor(
                     mErrorTextView.getResources().getColor(R.color.hint_color, null));
-            mErrorTextView.setText(
-                    mErrorTextView.getResources().getString(R.string.pin_code_fingerprint_text));
+            mErrorTextView.setText(fingerprintText);
             mIcon.setImageResource(R.drawable.ic_fp_40px);
         }
     };
