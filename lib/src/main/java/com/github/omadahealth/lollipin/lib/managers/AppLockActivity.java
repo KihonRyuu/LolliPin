@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
@@ -192,6 +194,11 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      */
     private void setStepText() {
         mStepTextView.setText(getStepText(mType));
+        if (mType == AppLock.WRONG_PIN) {
+            mStepTextView.setTextColor(ContextCompat.getColor(this, R.color.warning_color));
+        } else {
+            mStepTextView.setTextColor(ContextCompat.getColor(this, R.color.dark_grey_color));
+        }
     }
 
     /**
@@ -217,6 +224,9 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
                 break;
             case AppLock.CONFIRM_PIN:
                 msg = getString(R.string.pin_code_step_enable_confirm, this.getPinLength());
+                break;
+            case AppLock.WRONG_PIN:
+                msg = getString(R.string.pin_code_step_wrong);
                 break;
         }
         return msg;
@@ -402,6 +412,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      * Run a shake animation when the password is not valid.
      */
     protected void onPinCodeError() {
+        final int currentType = mType;
         onPinFailure(mAttempts++);
         Thread thread = new Thread() {
             public void run() {
@@ -410,9 +421,20 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
                 Animation animation = AnimationUtils.loadAnimation(
                         AppLockActivity.this, R.anim.shake);
                 mKeyboardView.startAnimation(animation);
+
+                mType = AppLock.WRONG_PIN;
+                setStepText();
             }
         };
         runOnUiThread(thread);
+
+        new Handler().postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                mType = currentType;
+                setStepText();
+            }
+        }, 1000);
     }
 
     protected void onPinCodeSuccess() {

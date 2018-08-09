@@ -25,6 +25,10 @@ public abstract class AppLock {
      * UNLOCK_PIN type, uses to ask the password to the user, in order to unlock the app
      */
     public static final int UNLOCK_PIN = 4;
+    /**
+     * WRONG_PIN type, uses to indicate wrong password
+     */
+    public static final int WRONG_PIN = 5;
 
     /**
      * LOGO_ID_NONE used to denote when a user has not set a logoId using {@link #setLogoId(int)}
