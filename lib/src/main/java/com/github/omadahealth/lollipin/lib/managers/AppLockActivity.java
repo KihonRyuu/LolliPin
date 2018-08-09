@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.hardware.fingerprint.FingerprintManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
@@ -20,6 +22,7 @@ import com.github.omadahealth.lollipin.lib.interfaces.KeyboardButtonClickedListe
 import com.github.omadahealth.lollipin.lib.views.KeyboardView;
 import com.github.omadahealth.lollipin.lib.views.PinCodeRoundView;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 
@@ -34,6 +37,8 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
     public static final String TAG = AppLockActivity.class.getSimpleName();
     public static final String ACTION_CANCEL = TAG + ".actionCancelled";
     private static final int DEFAULT_PIN_LENGTH = 4;
+    private static Handler handler = new Handler();
+    private MyRunnable runnable = new MyRunnable(this);
 
     protected TextView mStepTextView;
     protected TextView mForgotTextView;
@@ -49,6 +54,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
     protected FingerprintUiHelper mFingerprintUiHelper;
 
     protected int mType = AppLock.UNLOCK_PIN;
+    protected int currentType = AppLock.UNLOCK_PIN;
     protected int mAttempts = 1;
     protected String mPinCode;
 
@@ -192,6 +198,11 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      */
     private void setStepText() {
         mStepTextView.setText(getStepText(mType));
+        if (mType == AppLock.WRONG_PIN) {
+            mStepTextView.setTextColor(ContextCompat.getColor(this, R.color.warning_color));
+        } else {
+            mStepTextView.setTextColor(ContextCompat.getColor(this, R.color.dark_grey_color));
+        }
     }
 
     /**
@@ -217,6 +228,9 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
                 break;
             case AppLock.CONFIRM_PIN:
                 msg = getString(R.string.pin_code_step_enable_confirm, this.getPinLength());
+                break;
+            case AppLock.WRONG_PIN:
+                msg = getString(R.string.pin_code_step_wrong);
                 break;
         }
         return msg;
@@ -402,6 +416,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      * Run a shake animation when the password is not valid.
      */
     protected void onPinCodeError() {
+        currentType = mType;
         onPinFailure(mAttempts++);
         Thread thread = new Thread() {
             public void run() {
@@ -410,9 +425,14 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
                 Animation animation = AnimationUtils.loadAnimation(
                         AppLockActivity.this, R.anim.shake);
                 mKeyboardView.startAnimation(animation);
+
+                mType = AppLock.WRONG_PIN;
+                setStepText();
             }
         };
         runOnUiThread(thread);
+
+        handler.postDelayed(runnable, 1000);
     }
 
     protected void onPinCodeSuccess() {
@@ -494,5 +514,20 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      */
     public Class<? extends AppLockActivity> getCustomAppLockActivityClass() {
         return this.getClass();
+    }
+
+    private static class MyRunnable implements Runnable {
+        private WeakReference<AppLockActivity> mActivity;
+
+        public MyRunnable(AppLockActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void run() {
+            AppLockActivity activity = mActivity.get();
+            activity.mType = activity.currentType;
+            activity.setStepText();
+        }
     }
 }
