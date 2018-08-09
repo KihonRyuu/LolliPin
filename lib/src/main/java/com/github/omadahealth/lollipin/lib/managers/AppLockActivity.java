@@ -22,6 +22,7 @@ import com.github.omadahealth.lollipin.lib.interfaces.KeyboardButtonClickedListe
 import com.github.omadahealth.lollipin.lib.views.KeyboardView;
 import com.github.omadahealth.lollipin.lib.views.PinCodeRoundView;
 
+import java.lang.ref.WeakReference;
 import java.util.Arrays;
 import java.util.List;
 
@@ -36,6 +37,8 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
     public static final String TAG = AppLockActivity.class.getSimpleName();
     public static final String ACTION_CANCEL = TAG + ".actionCancelled";
     private static final int DEFAULT_PIN_LENGTH = 4;
+    private static Handler handler = new Handler();
+    private MyRunnable runnable = new MyRunnable(this);
 
     protected TextView mStepTextView;
     protected TextView mForgotTextView;
@@ -51,6 +54,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
     protected FingerprintUiHelper mFingerprintUiHelper;
 
     protected int mType = AppLock.UNLOCK_PIN;
+    protected int currentType = AppLock.UNLOCK_PIN;
     protected int mAttempts = 1;
     protected String mPinCode;
 
@@ -412,7 +416,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      * Run a shake animation when the password is not valid.
      */
     protected void onPinCodeError() {
-        final int currentType = mType;
+        currentType = mType;
         onPinFailure(mAttempts++);
         Thread thread = new Thread() {
             public void run() {
@@ -428,13 +432,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
         };
         runOnUiThread(thread);
 
-        new Handler().postDelayed(new Runnable() {
-            @Override
-            public void run() {
-                mType = currentType;
-                setStepText();
-            }
-        }, 1000);
+        handler.postDelayed(runnable, 1000);
     }
 
     protected void onPinCodeSuccess() {
@@ -516,5 +514,20 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      */
     public Class<? extends AppLockActivity> getCustomAppLockActivityClass() {
         return this.getClass();
+    }
+
+    private static class MyRunnable implements Runnable {
+        private WeakReference<AppLockActivity> mActivity;
+
+        public MyRunnable(AppLockActivity activity) {
+            mActivity = new WeakReference<>(activity);
+        }
+
+        @Override
+        public void run() {
+            AppLockActivity activity = mActivity.get();
+            activity.mType = activity.currentType;
+            activity.setStepText();
+        }
     }
 }
