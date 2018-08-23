@@ -158,8 +158,8 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
                             getFingerprintFailureText(),
                             this);
             try {
-            if (mFingerprintManager.isHardwareDetected() && mFingerprintUiHelper.isFingerprintAuthAvailable()
-                    && mLockManager.getAppLock().isFingerprintAuthEnabled()) {
+                if (mFingerprintManager.isHardwareDetected() && mFingerprintUiHelper.isFingerprintAuthAvailable()
+                        && mLockManager.getAppLock().isFingerprintAuthEnabled()) {
                     mFingerprintImageView.setVisibility(View.VISIBLE);
                     mFingerprintTextView.setVisibility(View.VISIBLE);
                     mFingerprintUiHelper.startListening();
@@ -168,6 +168,10 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
                     mFingerprintTextView.setVisibility(View.GONE);
                 }
             } catch (SecurityException e) {
+                Log.e(TAG, e.toString());
+                mFingerprintImageView.setVisibility(View.GONE);
+                mFingerprintTextView.setVisibility(View.GONE);
+            } catch (NullPointerException e) {
                 Log.e(TAG, e.toString());
                 mFingerprintImageView.setVisibility(View.GONE);
                 mFingerprintTextView.setVisibility(View.GONE);
