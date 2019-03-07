@@ -202,11 +202,7 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
      */
     private void setStepText() {
         mStepTextView.setText(getStepText(mType));
-        if (mType == AppLock.WRONG_PIN) {
-            mStepTextView.setTextColor(ContextCompat.getColor(this, R.color.warning_color));
-        } else {
-            mStepTextView.setTextColor(ContextCompat.getColor(this, R.color.dark_grey_color));
-        }
+        mStepTextView.setTextColor(getStepTextColor(mType));
     }
 
     /**
@@ -238,6 +234,14 @@ public abstract class AppLockActivity extends PinActivity implements KeyboardBut
                 break;
         }
         return msg;
+    }
+
+    public int getStepTextColor(int reason) {
+        if (reason == AppLock.WRONG_PIN) {
+            return ContextCompat.getColor(this, R.color.warning_color);
+        } else {
+            return ContextCompat.getColor(this, R.color.dark_grey_color);
+        }
     }
 
     public String getForgotText() {
